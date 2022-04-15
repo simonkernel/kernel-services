@@ -17,9 +17,10 @@ import { ServicesProvider, useServices } from './contexts/ServicesContext.js'
 import Footer from './components/Footer'
 import FooterSmall from './components/FooterSmall'
 import Navbar from './components/Navbar'
+import NavbarLink from './components/NavbarLink'
 
 export {
   jwtService, rpcClient,
   ServicesProvider, useServices,
-  Footer, FooterSmall, Navbar 
+  Footer, FooterSmall, Navbar, NavbarLink
 }

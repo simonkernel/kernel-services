@@ -13,6 +13,29 @@ import bgImage from 'assets/images/admin_bg.png'
 
 const ADMIN_ROLE = 100 
 
+const navbarLinks = [
+  {
+    url: "https://kernel.community/en/learn/",
+    iconName: "far fa-file-alt",
+    title: "Learn",
+  },
+  {
+    url: "https://twitter.com/kernel0x",
+    iconName: "fab fa-twitter",
+    title: "Tweet",
+  },
+  {
+    url: "https://www.youtube.com/channel/UC2kUaSgR0L-uzGkNsOxSxzw",
+    iconName: "fab fa-youtube",
+    title: "Watch",
+  },
+  {
+    url: "https://github.com/kernel-community/",
+    iconName: "fab fa-github",
+    title: "Contribute",
+  },
+]
+
 const Admin = () => {
 
   const navigate = useNavigate()
@@ -29,7 +52,7 @@ const Admin = () => {
 
 	return (
     <div>
-      <Navbar transparent />
+      <Navbar menuLinks={ navbarLinks } showRegisterButton={ true } />
         <main>
           <section className="absolute md:pt-32 pb-32 w-full h-full">
             <div
