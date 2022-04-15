@@ -14,9 +14,9 @@ import rpcClient from './services/rpcClient.js'
 import { ServicesProvider, useServices } from './contexts/ServicesContext.js'
 
 // components
-import Footer from './components/Footer.js'
-import FooterSmall from './components/FooterSmall.js'
-import Navbar from './components/Navbar.js'
+import Footer from './components/Footer'
+import FooterSmall from './components/FooterSmall'
+import Navbar from './components/Navbar'
 
 export {
   jwtService, rpcClient,
