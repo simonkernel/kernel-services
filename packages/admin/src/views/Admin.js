@@ -52,7 +52,7 @@ const Admin = () => {
 
 	return (
     <div>
-      <Navbar menuLinks={ navbarLinks } showRegisterButton={ true } />
+      <Navbar title={ "Kernel Steward" } menuLinks={ navbarLinks } showRegisterButton={ true } />
         <main>
           <section className="absolute md:pt-32 pb-32 w-full h-full">
             <div

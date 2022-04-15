@@ -12,7 +12,8 @@ import { Link } from 'react-router-dom'
 
 export default function Navbar(props) {
   const [ navbarOpen, setNavbarOpen ] = React.useState(false);
-  const { menuLinks, showRegisterButton } = props;
+  const { title, menuLinks, showRegisterButton } = props;
+  const homeUrl = props.homeUrl || `/`;
 
   return (
     <nav
@@ -31,7 +32,7 @@ export default function Navbar(props) {
               " text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase"
             }
           >
-            <Link to="/">Kernel Community</Link>
+            { title && <Link to={ homeUrl }>{ title }</Link> }
           </button>
           { menuLinks &&
             <button
