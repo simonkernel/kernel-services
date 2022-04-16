@@ -10,17 +10,17 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 export default function NavbarLink(props) {
+  const { textColor } = props;
   const { url, iconName, title } = props.link;
 
   return (
     <a
-      className="text-gray-800 hover:text-gray-600 px-3 py-4 lg:py-2
-        flex items-center text-xs uppercase font-bold"
+      className={`${textColor} px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold`}
       href={ url }
     >
       { iconName &&
         <React.Fragment>
-          <i className={ `text-gray-500 ${iconName} text-lg leading-lg mr-2` } />
+          <i className={ `${textColor} ${iconName} text-lg leading-lg mr-2` } />
           {" "}
         </React.Fragment>
       }

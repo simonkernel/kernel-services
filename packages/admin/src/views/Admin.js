@@ -52,7 +52,8 @@ const Admin = () => {
 
 	return (
     <div>
-      <Navbar title={ "Kernel Steward" } menuLinks={ navbarLinks } showRegisterButton={ true } />
+      <Navbar title={ "Kernel Steward" } menuLinks={ navbarLinks } showRegisterButton={ true }
+        backgroundColor={ "bg-kernel-dark" } textColor={ "text-kernel-white" } />
         <main>
           <section className="absolute md:pt-32 pb-32 w-full h-full">
             <div
