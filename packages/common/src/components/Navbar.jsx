@@ -6,9 +6,9 @@
  *
  */
 
-import React from 'react'
-import { NavbarLink } from '@kernel/common'
-import { Link } from 'react-router-dom'
+import React from "react"
+import { NavbarLink } from "@kernel/common"
+import { Link } from "react-router-dom"
 
 const defaults = {
   homeUrl: `/`,
@@ -18,7 +18,7 @@ const defaults = {
 
 export default function Navbar(props) {
   const [ navbarOpen, setNavbarOpen ] = React.useState(false);
-  const { title, menuLinks, showRegisterButton } = props;
+  const { title, menuLinks, additionalMenuItems } = props;
   const homeUrl = props.homeUrl || defaults.homeUrl;
   const backgroundColor = props.backgroundColor || defaults.backgroundColor;
   const textColor = props.textColor || defaults.textColor;
@@ -60,18 +60,13 @@ export default function Navbar(props) {
                 );
             })}
 
-            { showRegisterButton &&
-              <li className="flex items-center">
-                <button
-                  className={`bg-pink-500 text-white active:bg-pink-600 text-xs font-bold uppercase
-                  px-4 py-2 rounded outline-none focus:outline-none lg:mr-1 lg:mb-0
-                  ml-3 mb-3`}
-                  type="button"
-                >
-                  <i className="fas fa-user-plus"></i> <Link to="/register" >Register</Link>
-                </button>
-              </li>
-            }
+            { additionalMenuItems?.map((additionalMenuItem, idx) => {
+              return (
+                <li key={ idx } className="flex items-center">
+                  { additionalMenuItem }
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
