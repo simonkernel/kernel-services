@@ -24,7 +24,7 @@ export default function Navbar(props) {
   const textColor = props.textColor || defaults.textColor;
 
   return (
-    <nav className={`relative ${backgroundColor} flex flex-wrap items-center justify-between px-2 py-3`} >
+    <nav className={`relative ${backgroundColor} flex flex-wrap items-center justify-between px-2 py-4`} >
       <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <button
@@ -51,7 +51,7 @@ export default function Navbar(props) {
           }
           id="example-navbar-warning"
         >
-          <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+          <ul className="flex flex-col lg:flex-row list-none ml-3 mt-3">
             { menuLinks?.map(menuLink => {
                 return (
                   <li key={ menuLink.url } className="flex items-center">
