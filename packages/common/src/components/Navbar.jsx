@@ -44,31 +44,33 @@ export default function Navbar(props) {
             </button>
           }
         </div>
-        <div
-          className={
-            `lg:flex flex-grow items-center ${backgroundColor} lg:bg-transparent
-            ${navbarOpen ? " block rounded" : " hidden"}`
-          }
-          id="example-navbar-warning"
-        >
-          <ul className="flex flex-col lg:flex-row list-none ml-3 mt-3">
-            { menuLinks?.map(menuLink => {
+        { menuLinks &&
+          <div
+            className={
+              `lg:flex flex-grow items-center ${backgroundColor} lg:bg-transparent
+              ${navbarOpen ? " block rounded" : " hidden"}`
+            }
+            id="example-navbar-warning"
+          >
+            <ul className="flex flex-col lg:flex-row list-none ml-3 mt-3">
+              { menuLinks?.map(menuLink => {
+                  return (
+                    <li key={ menuLink.url } className="flex items-center">
+                      <NavbarLink link={ menuLink } textColor={ textColor } />
+                    </li>
+                  );
+              })}
+
+              { additionalMenuItems?.map((additionalMenuItem, idx) => {
                 return (
-                  <li key={ menuLink.url } className="flex items-center">
-                    <NavbarLink link={ menuLink } textColor={ textColor } />
+                  <li key={ idx } className="flex items-center">
+                    { additionalMenuItem }
                   </li>
                 );
-            })}
-
-            { additionalMenuItems?.map((additionalMenuItem, idx) => {
-              return (
-                <li key={ idx } className="flex items-center">
-                  { additionalMenuItem }
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+              })}
+            </ul>
+          </div>
+        }
       </div>
     </nav>
   );

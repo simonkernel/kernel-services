@@ -19,10 +19,10 @@ export default function NavbarLink(props) {
       href={ url }
     >
       { iconName &&
-        <React.Fragment>
+        <>
           <i className={ `${textColor} ${iconName} text-lg leading-lg mr-2` } />
           {" "}
-        </React.Fragment>
+        </>
       }
       { title }
     </a>
