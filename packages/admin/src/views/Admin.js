@@ -8,33 +8,9 @@
 
 import { useNavigate, Link } from "react-router-dom"
 import { useServices, Navbar, FooterSmall } from "@kernel/common"
+import AppConfig from "../App.config"
 
 import bgImage from "assets/images/admin_bg.png"
-
-const ADMIN_ROLE = 100 
-
-const navbarLinks = [
-  {
-    url: "https://kernel.community/en/learn/",
-    iconName: "far fa-file-alt",
-    title: "Learn",
-  },
-  {
-    url: "https://twitter.com/kernel0x",
-    iconName: "fab fa-twitter",
-    title: "Tweet",
-  },
-  {
-    url: "https://www.youtube.com/channel/UC2kUaSgR0L-uzGkNsOxSxzw",
-    iconName: "fab fa-youtube",
-    title: "Watch",
-  },
-  {
-    url: "https://github.com/kernel-community/",
-    iconName: "fab fa-github",
-    title: "Contribute",
-  },
-]
 
 const additionalNavItems = [
   (
@@ -52,11 +28,12 @@ const Admin = () => {
 
   const navigate = useNavigate()
   const { walletLogin } = useServices()
+  const navbarConfig = AppConfig.navbar
 
   const handleLogin = async () => {
     const user = await walletLogin()
-    console.log(user, ADMIN_ROLE)
-    if (user.role <= ADMIN_ROLE) {
+    console.log(user, AppConfig.adminRole)
+    if (user.role <= AppConfig.adminRole) {
       return navigate('/dashboard')
     }
     navigate('/')
@@ -64,7 +41,7 @@ const Admin = () => {
 
 	return (
     <div>
-      <Navbar title={ "Kernel Steward" } menuLinks={ navbarLinks }
+      <Navbar title={ AppConfig.appTitle } menuLinks={ navbarConfig.links }
         additionalMenuItems={ additionalNavItems }
         backgroundColor={ "bg-kernel-dark" } textColor={ "text-kernel-white" } />
         <main>
