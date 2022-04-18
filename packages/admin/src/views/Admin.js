@@ -8,7 +8,7 @@
 
 import { useNavigate, Link } from "react-router-dom"
 import { useServices, Navbar, FooterSmall } from "@kernel/common"
-import AppConfig from "../App.config"
+import AppConfig from "App.config"
 
 import bgImage from "assets/images/admin_bg.png"
 

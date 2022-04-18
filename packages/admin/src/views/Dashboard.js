@@ -10,7 +10,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useServices, FooterSmall, Navbar } from '@kernel/common'
 
-import AppConfig from '../App.config'
+import AppConfig from 'App.config'
 import Sidebar from 'components/Sidebar.js'
 
 const Dashboard = () => {

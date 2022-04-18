@@ -11,7 +11,7 @@ import { useNavigate, Link } from 'react-router-dom'
 
 import { useServices, FooterSmall, Navbar } from '@kernel/common'
 
-import AppConfig from '../App.config'
+import AppConfig from 'App.config'
 import Sidebar from 'components/Sidebar.js'
 
 const INITIAL_STATE = {resources: {}, clients: {}, entity: {}}
