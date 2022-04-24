@@ -25,9 +25,9 @@ const loadWallet = () => {
 
 const portalCards = [
   {
-    title: `Lootbag`,
-    description: `Claim some test ETH to start`,
-    url: '/lootbag',
+    title: `Claim`,
+    description: `Get set up with some test ETH`,
+    url: '/claim',
   },
   {
     title: `Explore`,
@@ -45,19 +45,19 @@ const portalCards = [
     url: '/mint',
   },
   {
-    title: `Address Book`,
-    description: `Get your friends involved`,
-    url: '/address-book',
+    title: `Contact`,
+    description: `Keep your friends' addresses safe`,
+    url: '/contact',
   },
   {
-    title: `Feature Requests`,
+    title: `Contribute`,
     description: `Learn how to improve this with us`,
-    url: '/feature-requests',
+    url: '/contribute',
   },
   {
-    title: `Contracts`,
+    title: `Interact`,
     description: `Explore all the best contracts`,
-    url: '/contracts',
+    url: '/interact',
   },
   {
     title: `Develop`,
