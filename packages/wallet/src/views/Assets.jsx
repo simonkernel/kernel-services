@@ -25,45 +25,45 @@ const loadWallet = () => {
 
 const portalCards = [
   {
-    title: `Claim`,
-    description: `Get set up with some test ETH`,
-    url: '/claim',
+    title: 'Claim',
+    description: 'Get set up with some test ETH',
+    url: '/claim'
   },
   {
-    title: `Explore`,
-    description: `Understand how transactions work`,
-    url: '/explore',
+    title: 'Explore',
+    description: 'Understand how transactions work',
+    url: '/explore'
   },
   {
-    title: `Deploy`,
-    description: `Create your own token now`,
-    url: '/deploy',
+    title: 'Deploy',
+    description: 'Create your own token now',
+    url: '/deploy'
   },
   {
-    title: `Mint`,
-    description: `Create an NFT in one go`,
-    url: '/mint',
+    title: 'Mint',
+    description: 'Create an NFT in one go',
+    url: '/mint'
   },
   {
-    title: `Contact`,
-    description: `Keep your friends' addresses safe`,
-    url: '/contact',
+    title: 'Contact',
+    description: 'Keep your friends\' addresses safe',
+    url: '/contact'
   },
   {
-    title: `Contribute`,
-    description: `Learn how to improve this with us`,
-    url: '/contribute',
+    title: 'Contribute',
+    description: 'Learn how to improve this with us',
+    url: '/contribute'
   },
   {
-    title: `Interact`,
-    description: `Explore all the best contracts`,
-    url: '/interact',
+    title: 'Interact',
+    description: 'Explore all the best contracts',
+    url: '/interact'
   },
   {
-    title: `Develop`,
-    description: `Write your own code!`,
-    url: '/develop',
-  },
+    title: 'Develop',
+    description: 'Write your own code!',
+    url: '/develop'
+  }
 ]
 
 const Assets = () => {
@@ -78,34 +78,34 @@ const Assets = () => {
   useEffect(() => {
     // TODO: pass in context
     const defaultProvider = new ethers.providers.CloudflareProvider()
-    const voidSigner = new ethers.VoidSigner(address, defaultProvider) 
+    const voidSigner = new ethers.VoidSigner(address, defaultProvider)
     setSigner(voidSigner)
     voidSigner.getBalance().then((e) => setBalance(ethers.utils.formatEther(e)))
   }, [address])
 
   return (
     <Page>
-      <div className="mt-32 mx-8 sm:mx-24 xl:mx-48">
-        <div className="text-center">
-          <div className="text-4xl my-4">
-            Welcome, { nickname }.
+      <div className='mt-32 mx-8 sm:mx-24 xl:mx-48'>
+        <div className='text-center'>
+          <div className='text-4xl my-4'>
+            Welcome, {nickname}.
           </div>
-          <div className="text-2xl my-4">
+          <div className='text-2xl my-4'>
             You are already valuable, just as you are.
           </div>
-          <div className="my-4">
+          <div className='my-4'>
             This portal will help you learn how to realize some of that value in the
             world of web3. We're so happy you're with us.
           </div>
         </div>
 
-        <div className="my-16 px-16 grid grid-cols-1 xl:grid-cols-2 gap-x-16 gap-y-8">
-          { portalCards.map((portalCard, index) => {
+        <div className='my-16 px-16 grid grid-cols-1 xl:grid-cols-2 gap-x-16 gap-y-8'>
+          {portalCards.map((portalCard, index) => {
             return (
-              <a key={ index } href={ portalCard.url }>
-                <div className="bg-kernel-dark text-kernel-white p-5 rounded shadow-md">
-                  <div className="text-xl mb-2">{ portalCard.title }</div>
-                  <div className="text-base mb-1">{ portalCard.description }</div>
+              <a key={index} href={portalCard.url}>
+                <div className='bg-kernel-dark text-kernel-white p-5 rounded shadow-md'>
+                  <div className='text-xl mb-2'>{portalCard.title}</div>
+                  <div className='text-base mb-1'>{portalCard.description}</div>
                 </div>
               </a>
             )
