@@ -20,13 +20,7 @@ export default function Footer (props) {
 
   return (
     <>
-      <footer
-        className={
-          props.absolute
-            ? `absolute w-full bottom-0 ${backgroundColor}`
-            : 'relative'
-        }
-      >
+      <footer className={backgroundColor}>
         <div className={`px-4 py-6 text-sm ${textColor} font-semibold`}>
           <div className='text-center'>
             {children}
