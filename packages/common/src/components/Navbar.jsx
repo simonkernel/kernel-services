@@ -18,7 +18,7 @@ const defaults = {
 
 export default function Navbar (props) {
   const [navbarOpen, setNavbarOpen] = React.useState(false)
-  const { title, menuLinks, additionalMenuItems } = props
+  const { title, logoUrl, menuLinks, additionalMenuItems } = props
   const homeUrl = props.homeUrl || defaults.homeUrl
   const backgroundColor = props.backgroundColor || defaults.backgroundColor
   const textColor = props.textColor || defaults.textColor
@@ -31,7 +31,8 @@ export default function Navbar (props) {
             className={`${textColor} text-sm font-bold leading-relaxed inline-block mr-4 py-2
               whitespace-nowrap uppercase`}
           >
-            {title && <Link to={homeUrl}>{title}</Link>}
+            {logoUrl && <span><img src={logoUrl} className='inline-block max-h-8 mr-3' /></span>}
+            {title && <span className='inline-block align-middle'><Link to={homeUrl}>{title}</Link></span>}
           </button>
           {menuLinks &&
             <button

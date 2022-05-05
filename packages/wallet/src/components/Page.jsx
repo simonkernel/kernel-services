@@ -15,6 +15,7 @@ const Page = ({ children }) => {
     <>
       <Navbar
         title={AppConfig.appTitle}
+        logoUrl={AppConfig.logoUrl}
         backgroundColor='bg-kernel-dark' textColor='text-kernel-white'
       />
       {children}
