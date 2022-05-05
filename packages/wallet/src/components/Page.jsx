@@ -6,7 +6,7 @@
  *
  */
 
-import { FooterSmall, Navbar } from '@kernel/common'
+import { Footer, Navbar } from '@kernel/common'
 
 import AppConfig from 'App.config'
 
@@ -21,7 +21,9 @@ const Page = ({ children }) => {
       />
       {children}
       <div className='relative md:pt-32 pb-32 pt-12'>
-        <FooterSmall absolute />
+        <Footer absolute backgroundColor='bg-kernel-dark' textColor='text-kernel-white'>
+          built at <a href='https://kernel.community/' className='text-kernel-green-light'>KERNEL</a>
+        </Footer>
       </div>
     </>
   )
