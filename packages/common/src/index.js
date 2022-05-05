@@ -20,5 +20,6 @@ import NavbarLink from './components/NavbarLink'
 
 export {
   jwtService, rpcClient,
+  ServicesProvider, useServices,
   Footer, Navbar, NavbarLink
 }
