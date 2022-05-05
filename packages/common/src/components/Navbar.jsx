@@ -52,9 +52,9 @@ export default function Navbar (props) {
             id='example-navbar-warning'
           >
             <ul className='flex flex-col lg:flex-row list-none ml-3 mt-3 lg:mt-0'>
-              {menuLinks?.map(menuLink => {
+              {menuLinks?.map((menuLink, idx) => {
                 return (
-                  <li key={menuLink.url} className='flex items-center'>
+                  <li key={idx} className='flex items-center'>
                     <NavbarLink link={menuLink} textColor={textColor} />
                   </li>
                 )
