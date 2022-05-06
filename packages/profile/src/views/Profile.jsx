@@ -93,9 +93,9 @@ const Input = ({ fieldName, editable = true, state, dispatch }) => {
         <span className='label-text text-gray-700 capitalize'>{fieldName}</span>
       </label>
       <input
-          type='text' disabled={!editable} className={`border-1 rounded w-full ${bgColorClass}`}
-          value={value(state, fieldName)} onChange={change.bind(null, dispatch, fieldName)}
-       />
+        type='text' disabled={!editable} className={`border-1 rounded w-full ${bgColorClass}`}
+        value={value(state, fieldName)} onChange={change.bind(null, dispatch, fieldName)}
+      />
     </div>
   )
 }
@@ -182,8 +182,7 @@ const Profile = () => {
               <div className=''>
                 {state.serviceerror.message}
               </div>
-            </label>
-          }
+            </label>}
         </form>
       </div>
       <Footer backgroundColor='bg-kernel-dark' textColor='text-kernel-white'>
