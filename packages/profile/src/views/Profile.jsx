@@ -15,18 +15,25 @@ import NavBar from 'components/NavBar'
 
 const FORM_INPUT = ['email', 'name', 'pronouns', 'twitter', 'city', 'company', 'bio']
 
-const INITIAL_STATE = ['wallet'].concat(FORM_INPUT)
-  .reduce((acc, k) => Object.assign(acc, { [k]: '' }), {})
+// initializes state in the form:
+// { wallet: '', email: '', consent: true }
+const INITIAL_STATE_KEYS = ['wallet'].concat(FORM_INPUT)
+const INITIAL_STATE = INITIAL_STATE_KEYS
+  .reduce((acc, key) => Object.assign(acc, { [key]: '' }), {})
 INITIAL_STATE.consent = true
 
 const actions = {}
 
-Object.keys(INITIAL_STATE)
+// initializes an actions object in the form:
+// { bio: (state, value) => Object.assign({}, state, bio: value}) }
+// each field's action updates the state with the given value
+INITIAL_STATE_KEYS
   .concat(['consent', 'profiles', 'members', 'memberId', 'profileId'])
-  .forEach((k) => {
-    actions[k] = (state, e) => Object.assign({}, state, { [k]: e })
+  .forEach((key) => {
+    actions[key] = (state, value) => Object.assign({}, state, { [key]: value })
   })
 
+// tries to call the given action
 const reducer = (state, action) => {
   try {
     // console.log(action.type, action.payload, state)
@@ -37,6 +44,7 @@ const reducer = (state, action) => {
   }
 }
 
+// tries to get the payload out of the event and dispatch it
 const change = (dispatch, type, e) => {
   try {
     const target = e.target
@@ -47,52 +55,45 @@ const change = (dispatch, type, e) => {
   }
 }
 
-const value = (state, type) => {
-  return state[type]
-}
+const value = (state, type) => state[type]
 
 const save = async (state, dispatch, e) => {
   e.preventDefault()
+
   const { profiles, members, memberId, profileId } = state
   const data = Object.keys(state)
-    .filter((k) => !['profiles', 'members', 'profileId', 'wallet'].includes(k))
-    .reduce((acc, k) => Object.assign(acc, { [k]: state[k] }), {})
+    .filter(key => !['profiles', 'members', 'profileId', 'wallet'].includes(key))
+    .reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {})
   console.log(data)
+
   if (profileId && memberId) {
     const patched = await profiles.patch(profileId, data)
     console.log('patched', patched)
     return patched
   }
+
   const profile = await profiles.create(data)
   console.log('new', profile)
   dispatch({ type: 'profileId', payload: profile.id })
+
   const member = await members.patch(profile.data.memberId, { profileId: profile.id })
   console.log(member)
   // dispatch({ type: 'created', payload: updated })
 }
 
-const capitalize = (s) => s[0].toUpperCase() + s.slice(1)
-
-const Input = ({ id, editable = true, state, dispatch }) => (
+const Input = ({ fieldName, editable = true, state, dispatch }) => (
   <>
     <label className='label'>
-      <span className='label-text text-gray-700'>{capitalize(id)}</span>
+      <span className='label-text text-gray-700 capitalize'>{fieldName}</span>
     </label>
-    {
-      editable
-        ? (<input
-            type='text' className='input input-bordered w-full'
-            value={value(state, id)} onChange={change.bind(null, dispatch, id)}
-           />)
-        : (<input
-            type='text' className='input input-bordered w-full' disabled
-            value={value(state, id)}
-           />)
-    }
+    <input
+        type='text' disabled={!editable} className='input input-bordered w-full'
+        value={value(state, fieldName)} onChange={change.bind(null, dispatch, fieldName)}
+     />
   </>
 )
 
-const Page = () => {
+const Profile = () => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const navigate = useNavigate()
 
@@ -111,12 +112,16 @@ const Page = () => {
       dispatch({ type: 'memberId', payload: memberId })
 
       const { entityFactory } = await services()
+
       const profiles = await entityFactory({ resource: 'profile' })
       dispatch({ type: 'profiles', payload: profiles })
+
       const members = await entityFactory({ resource: 'member' })
       dispatch({ type: 'members', payload: members })
+
       const member = await members.get(memberId)
       dispatch({ type: 'wallet', payload: member.data.wallet })
+
       const { data: { profileId } } = member
       if (profileId) {
         dispatch({ type: 'profileId', payload: profileId })
@@ -124,8 +129,8 @@ const Page = () => {
         console.log(profile)
         // TODO: parse profile into state
         const data = profile.data
-        Object.keys(data)
-          .forEach((k) => dispatch({ type: k, payload: data[k] }))
+        Object.entries(data)
+          .forEach(([key, value]) => dispatch({ type: key, payload: value }))
       }
     })()
   }, [services, user])
@@ -138,8 +143,12 @@ const Page = () => {
           <div className='card w-full bg-base-100 shadow-xl'>
             <div className='card-body'>
               <form className='form-control w-full'>
-                <Input id='wallet' editable={false} state={state} dispatch={dispatch} />
-                {FORM_INPUT.map((k) => <Input key={k} id={k} state={state} dispatch={dispatch} />)}
+                <Input fieldName='wallet' editable={false} state={state} dispatch={dispatch} />
+                {FORM_INPUT.map((fieldName) => {
+                  return (
+                    <Input key={fieldName} fieldName={fieldName} state={state} dispatch={dispatch} />
+                  )
+                })}
                 <label className='label cursor-pointer justify-center'>
                   <input
                     type='checkbox' className='checkbox checkbox-primary'
@@ -171,4 +180,4 @@ const Page = () => {
   )
 }
 
-export default Page
+export default Profile
