@@ -8,10 +8,9 @@
 
 import { useEffect, useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useServices } from '@kernel/common'
+import { useServices, Navbar, Footer } from '@kernel/common'
 
 import AppConfig from 'App.config'
-import NavBar from 'components/NavBar'
 
 const FORM_INPUT = ['email', 'name', 'pronouns', 'twitter', 'city', 'company', 'bio']
 
@@ -81,17 +80,22 @@ const save = async (state, dispatch, e) => {
   // dispatch({ type: 'created', payload: updated })
 }
 
-const Input = ({ fieldName, editable = true, state, dispatch }) => (
-  <>
-    <label className='label'>
-      <span className='label-text text-gray-700 capitalize'>{fieldName}</span>
-    </label>
-    <input
-        type='text' disabled={!editable} className='input input-bordered w-full'
-        value={value(state, fieldName)} onChange={change.bind(null, dispatch, fieldName)}
-     />
-  </>
-)
+const Input = ({ fieldName, editable = true, state, dispatch }) => {
+  const disabled = !editable
+  const bgColorClass = disabled ? 'bg-gray-200' : ''
+
+  return (
+    <div className='mb-6'>
+      <label className='label block mb-1'>
+        <span className='label-text text-gray-700 capitalize'>{fieldName}</span>
+      </label>
+      <input
+          type='text' disabled={!editable} className={`border-1 rounded w-full ${bgColorClass}`}
+          value={value(state, fieldName)} onChange={change.bind(null, dispatch, fieldName)}
+       />
+    </div>
+  )
+}
 
 const Profile = () => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
@@ -136,46 +140,49 @@ const Profile = () => {
   }, [services, user])
 
   return (
-    <div className='md:container md:mx-auto'>
-      <NavBar />
-      <div className='flex md:flex-row flex-wrap py-4 justify-center justify-between'>
-        <div className='w-full px-8'>
-          <div className='card w-full bg-base-100 shadow-xl'>
-            <div className='card-body'>
-              <form className='form-control w-full'>
-                <Input fieldName='wallet' editable={false} state={state} dispatch={dispatch} />
-                {FORM_INPUT.map((fieldName) => {
-                  return (
-                    <Input key={fieldName} fieldName={fieldName} state={state} dispatch={dispatch} />
-                  )
-                })}
-                <label className='label cursor-pointer justify-center'>
-                  <input
-                    type='checkbox' className='checkbox checkbox-primary'
-                    checked={value(state, 'consent')} onChange={change.bind(null, dispatch, 'consent')}
-                  />
-                  <span className='label-text'>Make my information available to others</span>
-                </label>
-                <label className='label justify-center'>
-                  <button
-                    onClick={save.bind(null, state, dispatch)}
-                    className='btn btn-primary'
-                  >
-                    Save
-                  </button>
-                </label>
-                {state && state.serviceError &&
-                  <label className='block'>
-                    <span className='text-gray-700'>Error</span>
-                    <div className=''>
-                      {state.serviceError.message}
-                    </div>
-                  </label>}
-              </form>
-            </div>
+    <div className='flex flex-col h-screen justify-between'>
+      <Navbar
+        title={AppConfig.appTitle}
+        logoUrl={AppConfig.logoUrl}
+        menuLinks={AppConfig.navbar?.links}
+        backgroundColor='bg-kernel-dark' textColor='text-kernel-white'
+      />
+      <div className='mb-auto py-20 px-20 sm:px-40 lg:px-80'>
+        <form className='form-control w-full'>
+          <Input fieldName='wallet' editable={false} state={state} dispatch={dispatch} />
+          {FORM_INPUT.map((fieldName) => {
+            return (
+              <Input key={fieldName} fieldName={fieldName} state={state} dispatch={dispatch} />
+            )
+          })}
+          <div className='mt-8 mb-2'>
+            <label className='label'>
+              <input
+                type='checkbox' className='checkbox checkbox-primary cursor-pointer align-middle'
+                checked={value(state, 'consent')} onChange={change.bind(null, dispatch, 'consent')}
+              />
+              <span className='label-text ml-1.5 align-middle'>Make my information available to others</span>
+            </label>
           </div>
-        </div>
+          <button
+            onClick={save.bind(null, state, dispatch)}
+            className={`my-6 px-6 py-4 bg-kernel-green-dark text-kernel-white w-full rounded font-bold`}
+          >
+            Save
+          </button>
+          {state && state.serviceError &&
+            <label className='block'>
+              <span className='text-gray-700'>error</span>
+              <div className=''>
+                {state.serviceerror.message}
+              </div>
+            </label>
+          }
+        </form>
       </div>
+      <Footer backgroundColor='bg-kernel-dark' textColor='text-kernel-white'>
+        built at <a href='https://kernel.community/' className='text-kernel-green-light'>KERNEL</a>
+      </Footer>
     </div>
   )
 }
