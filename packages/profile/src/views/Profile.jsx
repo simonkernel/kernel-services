@@ -6,7 +6,7 @@
  *
  */
 
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useServices, Navbar, Footer } from '@kernel/common'
 
@@ -56,8 +56,9 @@ const change = (dispatch, type, e) => {
 
 const value = (state, type) => state[type]
 
-const save = async (state, dispatch, e) => {
+const save = async (state, dispatch, setSubmitting, e) => {
   e.preventDefault()
+  setSubmitting(true)
 
   const { profiles, members, memberId, profileId } = state
   const data = Object.keys(state)
@@ -68,6 +69,7 @@ const save = async (state, dispatch, e) => {
   if (profileId && memberId) {
     const patched = await profiles.patch(profileId, data)
     console.log('patched', patched)
+    setSubmitting(false)
     return patched
   }
 
@@ -77,6 +79,7 @@ const save = async (state, dispatch, e) => {
 
   const member = await members.patch(profile.data.memberId, { profileId: profile.id })
   console.log(member)
+  setSubmitting(false)
   // dispatch({ type: 'created', payload: updated })
 }
 
@@ -103,6 +106,8 @@ const Profile = () => {
 
   const { services, currentUser } = useServices()
   const user = currentUser()
+
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (!user || user.role > AppConfig.minRole) {
@@ -165,8 +170,9 @@ const Profile = () => {
             </label>
           </div>
           <button
-            onClick={save.bind(null, state, dispatch)}
-            className={`my-6 px-6 py-4 bg-kernel-green-dark text-kernel-white w-full rounded font-bold`}
+            disabled={submitting}
+            onClick={save.bind(null, state, dispatch, setSubmitting)}
+            className={`my-6 px-6 py-4 ${submitting ? 'bg-gray-300' : 'bg-kernel-green-dark'} text-kernel-white w-full rounded font-bold`}
           >
             Save
           </button>
