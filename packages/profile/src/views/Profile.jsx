@@ -8,7 +8,7 @@
 
 import { useEffect, useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useServices, Navbar, Footer } from '@kernel/common'
+import { useServices, Navbar, Footer, Alert } from '@kernel/common'
 
 import AppConfig from 'App.config'
 
@@ -56,33 +56,6 @@ const change = (dispatch, type, e) => {
 
 const value = (state, type) => state[type]
 
-const save = async (state, dispatch, setSubmitting, e) => {
-  e.preventDefault()
-  setSubmitting(true)
-
-  const { profiles, members, memberId, profileId } = state
-  const data = Object.keys(state)
-    .filter(key => !['profiles', 'members', 'profileId', 'wallet'].includes(key))
-    .reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {})
-  console.log(data)
-
-  if (profileId && memberId) {
-    const patched = await profiles.patch(profileId, data)
-    console.log('patched', patched)
-    setSubmitting(false)
-    return patched
-  }
-
-  const profile = await profiles.create(data)
-  console.log('new', profile)
-  dispatch({ type: 'profileId', payload: profile.id })
-
-  const member = await members.patch(profile.data.memberId, { profileId: profile.id })
-  console.log(member)
-  setSubmitting(false)
-  // dispatch({ type: 'created', payload: updated })
-}
-
 const Input = ({ fieldName, editable = true, state, dispatch }) => {
   const disabled = !editable
   const bgColorClass = disabled ? 'bg-gray-200' : ''
@@ -108,6 +81,8 @@ const Profile = () => {
   const user = currentUser()
 
   const [submitting, setSubmitting] = useState(false)
+  const [result, setResult] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     if (!user || user.role > AppConfig.minRole) {
@@ -144,6 +119,56 @@ const Profile = () => {
     })()
   }, [services, user])
 
+  const save = async (state, dispatch, e) => {
+    e.preventDefault()
+    setSubmitting(true)
+    setResult(null)
+    setErrorMessage(null)
+
+    const { profiles, members, memberId, profileId } = state
+    const data = Object.keys(state)
+      .filter(key => !['profiles', 'members', 'profileId', 'wallet'].includes(key))
+      .reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {})
+    console.log(data)
+
+    try {
+      if (profileId && memberId) {
+        const patched = await profiles.patch(profileId, data)
+        console.log('patched', patched)
+        setSubmitting(false)
+        setResult('success')
+        return patched
+      }
+
+      const profile = await profiles.create(data)
+      console.log('new', profile)
+      dispatch({ type: 'profileId', payload: profile.id })
+
+      const member = await members.patch(profile.data.memberId, { profileId: profile.id })
+      console.log(member)
+      setSubmitting(false)
+      setResult('success')
+      // dispatch({ type: 'created', payload: updated })
+    } catch (error) {
+      setSubmitting(false)
+      setResult('error')
+      setErrorMessage(error.message)
+    }
+  }
+
+  let alert;
+  if (submitting) {
+    alert = <Alert type='transparent'>Saving your changes...</Alert>
+  } else if (result) {
+    if (result === 'success') {
+      alert = <Alert type='success'>Your changes have been saved!</Alert>
+    } else if (result === 'error') {
+      alert = <Alert type='danger'>Something went wrong. {errorMessage}</Alert>
+    }
+  } else {
+    alert = <Alert type='transparent' />
+  }
+
   return (
     <div className='flex flex-col h-screen justify-between'>
       <Navbar
@@ -171,18 +196,14 @@ const Profile = () => {
           </div>
           <button
             disabled={submitting}
-            onClick={save.bind(null, state, dispatch, setSubmitting)}
-            className={`my-6 px-6 py-4 ${submitting ? 'bg-gray-300' : 'bg-kernel-green-dark'} text-kernel-white w-full rounded font-bold`}
+            onClick={save.bind(null, state, dispatch)}
+            className={`mt-6 mb-4 px-6 py-4 ${submitting ? 'bg-gray-300' : 'bg-kernel-green-dark'} text-kernel-white w-full rounded font-bold`}
           >
             Save
           </button>
-          {state && state.serviceError &&
-            <label className='block'>
-              <span className='text-gray-700'>error</span>
-              <div className=''>
-                {state.serviceerror.message}
-              </div>
-            </label>}
+
+          {alert}
+
         </form>
       </div>
       <Footer backgroundColor='bg-kernel-dark' textColor='text-kernel-white'>
