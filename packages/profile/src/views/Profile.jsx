@@ -8,6 +8,7 @@
 
 import { useEffect, useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Switch } from '@headlessui/react'
 import { useServices, Navbar, Footer, Alert } from '@kernel/common'
 
 import AppConfig from 'App.config'
@@ -80,6 +81,8 @@ const Profile = () => {
   const { services, currentUser } = useServices()
   const user = currentUser()
 
+  const [consentToggleEnabled, setConsentToggleEnabled] = useState(value(state, 'consent'))
+
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -118,6 +121,16 @@ const Profile = () => {
       }
     })()
   }, [services, user])
+
+  const changeConsentToggle = (enabled) => {
+    setConsentToggleEnabled(enabled)
+
+    try {
+      dispatch({ type: 'consent', payload: enabled })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const save = async (state, dispatch, e) => {
     e.preventDefault()
@@ -186,13 +199,22 @@ const Profile = () => {
             )
           })}
           <div className='mt-8 mb-2'>
-            <label className='label'>
-              <input
-                type='checkbox' className='checkbox checkbox-primary cursor-pointer align-middle'
-                checked={value(state, 'consent')} onChange={change.bind(null, dispatch, 'consent')}
-              />
-              <span className='label-text ml-1.5 align-middle'>Make my information available to others</span>
-            </label>
+            <Switch.Group>
+              <Switch
+                checked={consentToggleEnabled}
+                onChange={changeConsentToggle}
+                className={`${
+                  consentToggleEnabled ? 'bg-kernel-green-dark' : 'bg-gray-200'
+                } relative inline-flex h-6 w-9 items-center rounded-full`}
+              >
+                <span
+                  className={`transform transition ease-in-out duration-200 ${
+                    consentToggleEnabled ? 'translate-x-4' : 'translate-x-1'
+                  } inline-block h-4 w-4 transform rounded-full bg-white`}
+                />
+              </Switch>
+              <Switch.Label passive className='ml-2 align-top'>Make my information available to others</Switch.Label>
+            </Switch.Group>
           </div>
           <button
             disabled={submitting}
