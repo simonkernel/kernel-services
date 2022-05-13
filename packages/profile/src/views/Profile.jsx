@@ -169,7 +169,7 @@ const Profile = () => {
     }
   }
 
-  let alert;
+  let alert
   if (submitting) {
     alert = <Alert type='transparent'>Saving your changes...</Alert>
   } else if (result) {
