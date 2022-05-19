@@ -12,21 +12,20 @@ import { Footer, Navbar } from '@kernel/common'
 
 import AppConfig from 'App.config'
 
+const editMenuItem = ({ projectHandle }) => {
+  return (
+    <Link
+      key='edit'
+      className='text-kernel-white px-3 py-4 lg:px-6 lg:py-2 flex items-center text-sm lowercase font-bold'
+      to={`/edit/${projectHandle}`}
+    >
+      Edit
+    </Link>
+  )
+}
+
 const Page = ({ projectHandle, children }) => {
-  let additionalMenuItems
-  if (projectHandle) {
-    additionalMenuItems = [
-      <Link
-        key='edit'
-        className='$text-kernel-white px-3 py-4 lg:px-6 lg:py-2 flex items-center text-sm lowercase font-bold'
-        to={`/edit/${projectHandle}`}
-      >
-        Edit
-      </Link>
-    ]
-  } else {
-    additionalMenuItems = []
-  }
+  const additionalMenuItems = projectHandle ? [editMenuItem({ projectHandle })] : []
 
   return (
     <div className='flex flex-col h-screen justify-between'>
