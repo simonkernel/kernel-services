@@ -6,7 +6,7 @@
  *
  */
 
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useReducer } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Switch } from '@headlessui/react'
 import { useServices, Navbar, Footer, Alert } from '@kernel/common'
@@ -17,17 +17,25 @@ const FORM_INPUT = ['email', 'name', 'pronouns', 'twitter', 'city', 'company', '
 
 // initializes state in the form:
 // { wallet: '', email: '', consent: true }
-const INITIAL_STATE_KEYS = ['wallet'].concat(FORM_INPUT)
-const INITIAL_STATE = INITIAL_STATE_KEYS
+const INITIAL_FORM_KEYS = ['wallet'].concat(FORM_INPUT)
+const INITIAL_FORM_FIELDS_STATE = INITIAL_FORM_KEYS
   .reduce((acc, key) => Object.assign(acc, { [key]: '' }), {})
-INITIAL_STATE.consent = true
+INITIAL_FORM_FIELDS_STATE.consent = true
+
+const INITIAL_FORM_SUBMISSION_STATE = {
+  formStatus: 'clean',
+  errorMessage: null,
+  consentToggleEnabled: INITIAL_FORM_FIELDS_STATE.consent,
+}
+
+const INITIAL_STATE = {...INITIAL_FORM_FIELDS_STATE, ...INITIAL_FORM_SUBMISSION_STATE}
 
 const actions = {}
 
 // initializes an actions object in the form:
 // { bio: (state, value) => Object.assign({}, state, bio: value}) }
 // each field's action updates the state with the given value
-INITIAL_STATE_KEYS
+Object.keys(INITIAL_STATE)
   .concat(['consent', 'profiles', 'members', 'memberId', 'profileId'])
   .forEach((key) => {
     actions[key] = (state, value) => Object.assign({}, state, { [key]: value })
@@ -57,6 +65,46 @@ const change = (dispatch, type, e) => {
 
 const value = (state, type) => state[type]
 
+const save = async (state, dispatch, e) => {
+  e.preventDefault()
+  dispatch({ type: 'formStatus', payload: 'submitting' })
+  dispatch({ type: 'errorMessage', payload: null })
+
+  const keysToExclude = [
+    'profiles',
+    'members',
+    'profileId',
+    'wallet',
+  ].concat(Object.keys(INITIAL_FORM_SUBMISSION_STATE))
+
+  const { profiles, members, memberId, profileId } = state
+  const data = Object.keys(state)
+    .filter(key => !keysToExclude.includes(key))
+    .reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {})
+  console.log(data)
+
+  try {
+    if (profileId && memberId) {
+      const patched = await profiles.patch(profileId, data)
+      console.log('patched', patched)
+      dispatch({ type: 'formStatus', payload: 'success' })
+      return patched
+    }
+
+    const profile = await profiles.create(data)
+    console.log('new', profile)
+    dispatch({ type: 'profileId', payload: profile.id })
+
+    const member = await members.patch(profile.data.memberId, { profileId: profile.id })
+    console.log(member)
+    dispatch({ type: 'formStatus', payload: 'success' })
+    // dispatch({ type: 'created', payload: updated })
+  } catch (error) {
+    dispatch({ type: 'formStatus', payload: 'error' })
+    dispatch({ type: 'errorMessage', payload: error.message })
+  }
+}
+
 const Input = ({ fieldName, editable = true, state, dispatch }) => {
   const disabled = !editable
   const bgColorClass = disabled ? 'bg-gray-200' : ''
@@ -74,18 +122,25 @@ const Input = ({ fieldName, editable = true, state, dispatch }) => {
   )
 }
 
+const ProfileAlert = ({ formStatus, errorMessage }) => {
+  switch (formStatus) {
+    case 'submitting':
+      return <Alert type='transparent'>Saving your changes...</Alert>
+    case 'success':
+      return <Alert type='success'>Your changes have been saved!</Alert>
+    case 'error':
+      return <Alert type='danger'>Something went wrong. {errorMessage}</Alert>
+    default:
+      return <Alert type='transparent' />
+  }
+}
+
 const Profile = () => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE)
   const navigate = useNavigate()
 
   const { services, currentUser } = useServices()
   const user = currentUser()
-
-  const [consentToggleEnabled, setConsentToggleEnabled] = useState(value(state, 'consent'))
-
-  const [submitting, setSubmitting] = useState(false)
-  const [result, setResult] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     if (!user || user.role > AppConfig.minRole) {
@@ -123,63 +178,13 @@ const Profile = () => {
   }, [services, user])
 
   const changeConsentToggle = (enabled) => {
-    setConsentToggleEnabled(enabled)
+    dispatch({ type: 'consentToggleEnabled', payload: enabled })
 
     try {
       dispatch({ type: 'consent', payload: enabled })
     } catch (error) {
       console.log(error)
     }
-  }
-
-  const save = async (state, dispatch, e) => {
-    e.preventDefault()
-    setSubmitting(true)
-    setResult(null)
-    setErrorMessage(null)
-
-    const { profiles, members, memberId, profileId } = state
-    const data = Object.keys(state)
-      .filter(key => !['profiles', 'members', 'profileId', 'wallet'].includes(key))
-      .reduce((acc, key) => Object.assign(acc, { [key]: state[key] }), {})
-    console.log(data)
-
-    try {
-      if (profileId && memberId) {
-        const patched = await profiles.patch(profileId, data)
-        console.log('patched', patched)
-        setSubmitting(false)
-        setResult('success')
-        return patched
-      }
-
-      const profile = await profiles.create(data)
-      console.log('new', profile)
-      dispatch({ type: 'profileId', payload: profile.id })
-
-      const member = await members.patch(profile.data.memberId, { profileId: profile.id })
-      console.log(member)
-      setSubmitting(false)
-      setResult('success')
-      // dispatch({ type: 'created', payload: updated })
-    } catch (error) {
-      setSubmitting(false)
-      setResult('error')
-      setErrorMessage(error.message)
-    }
-  }
-
-  let alert
-  if (submitting) {
-    alert = <Alert type='transparent'>Saving your changes...</Alert>
-  } else if (result) {
-    if (result === 'success') {
-      alert = <Alert type='success'>Your changes have been saved!</Alert>
-    } else if (result === 'error') {
-      alert = <Alert type='danger'>Something went wrong. {errorMessage}</Alert>
-    }
-  } else {
-    alert = <Alert type='transparent' />
   }
 
   return (
@@ -201,15 +206,15 @@ const Profile = () => {
           <div className='mt-8 mb-2'>
             <Switch.Group>
               <Switch
-                checked={consentToggleEnabled}
+                checked={state.consentToggleEnabled}
                 onChange={changeConsentToggle}
                 className={`${
-                  consentToggleEnabled ? 'bg-kernel-green-dark' : 'bg-gray-200'
+                  state.consentToggleEnabled ? 'bg-kernel-green-dark' : 'bg-gray-200'
                 } relative inline-flex h-6 w-9 items-center rounded-full`}
               >
                 <span
                   className={`transform transition ease-in-out duration-200 ${
-                    consentToggleEnabled ? 'translate-x-4' : 'translate-x-1'
+                    state.consentToggleEnabled ? 'translate-x-4' : 'translate-x-1'
                   } inline-block h-4 w-4 transform rounded-full bg-white`}
                 />
               </Switch>
@@ -217,14 +222,14 @@ const Profile = () => {
             </Switch.Group>
           </div>
           <button
-            disabled={submitting}
+            disabled={state.formStatus === 'submitting'}
             onClick={save.bind(null, state, dispatch)}
-            className={`mt-6 mb-4 px-6 py-4 ${submitting ? 'bg-gray-300' : 'bg-kernel-green-dark'} text-kernel-white w-full rounded font-bold`}
+            className={`mt-6 mb-4 px-6 py-4 ${state.formStatus === 'submitting' ? 'bg-gray-300' : 'bg-kernel-green-dark'} text-kernel-white w-full rounded font-bold`}
           >
             Save
           </button>
 
-          {alert}
+          <ProfileAlert formStatus={state.formStatus} errorMessage={state.errorMessage} />
 
         </form>
       </div>

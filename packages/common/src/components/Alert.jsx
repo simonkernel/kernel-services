@@ -8,7 +8,7 @@
 
 import React from 'react'
 
-const alertStylesByType = {
+const styles = {
   default: {
     backgroundColor: 'bg-yellow-100',
     textColor: 'text-gray-600'
@@ -27,14 +27,12 @@ const alertStylesByType = {
   }
 }
 
-export default function Alert (props) {
-  const { type, children } = props
-  const alertStyles = alertStylesByType[type] || alertStylesByType.default
-  const backgroundColor = props.backgroundColor || alertStyles.backgroundColor
-  const textColor = props.textColor || alertStyles.textColor
+export default ({ children, backgroundColor, textColor, type = 'default' }) => {
+  const backgroundColorStyle = backgroundColor || styles[type].backgroundColor
+  const textColorStyle = textColor || styles[type].textColor
 
   return (
-    <div className={`my-4 px-4 py-4 ${backgroundColor} ${textColor} rounded`}>
+    <div className={`my-4 px-4 py-4 ${backgroundColorStyle} ${textColorStyle} rounded`}>
       {children}
     </div>
   )
