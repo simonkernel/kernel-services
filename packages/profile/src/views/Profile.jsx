@@ -25,10 +25,10 @@ INITIAL_FORM_FIELDS_STATE.consent = true
 const INITIAL_FORM_SUBMISSION_STATE = {
   formStatus: 'clean',
   errorMessage: null,
-  consentToggleEnabled: INITIAL_FORM_FIELDS_STATE.consent,
+  consentToggleEnabled: INITIAL_FORM_FIELDS_STATE.consent
 }
 
-const INITIAL_STATE = {...INITIAL_FORM_FIELDS_STATE, ...INITIAL_FORM_SUBMISSION_STATE}
+const INITIAL_STATE = { ...INITIAL_FORM_FIELDS_STATE, ...INITIAL_FORM_SUBMISSION_STATE }
 
 const actions = {}
 
@@ -74,7 +74,7 @@ const save = async (state, dispatch, e) => {
     'profiles',
     'members',
     'profileId',
-    'wallet',
+    'wallet'
   ].concat(Object.keys(INITIAL_FORM_SUBMISSION_STATE))
 
   const { profiles, members, memberId, profileId } = state
